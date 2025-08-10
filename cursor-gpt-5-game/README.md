@@ -18,6 +18,7 @@ python3 -m http.server 5173
 - Undo: revert the last matched pair
 - Redo: re-apply the last undone move
 - Hint: highlights a pair and shows a descriptive message with coordinates and open sides
+- Shuffle: re-arranges the faces of all remaining tiles if you get stuck.
 
 ## Notes
 

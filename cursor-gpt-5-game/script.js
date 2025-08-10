@@ -107,6 +107,7 @@ const undoBtn = document.getElementById("undoBtn");
 const hintBtn = document.getElementById("hintBtn");
 const redoBtn = document.getElementById("redoBtn");
 const layoutSelect = document.getElementById("layoutSelect");
+const shuffleBtn = document.getElementById("shuffleBtn");
 const movesEl = document.getElementById("movesCount");
 const timeEl = document.getElementById("timeElapsed");
 const pairsEl = document.getElementById("pairsRemaining");
@@ -352,30 +353,36 @@ function createTileElement(tile) {
   el.style.top = `${positionToCssTop(tile.y, tile.z)}px`;
   el.style.zIndex = String(tile.z * 100 + tile.y * 2 + tile.x);
 
-  const { c1, c2 } = faceToColors(tile.face);
-
   const icon = document.createElement("div");
   icon.className = "icon";
-  // For images, background color of icon will be determined by image itself or default
-  // icon.style.background = `linear-gradient(135deg, ${c1}, ${c2})`;
-  icon.style.border = "1px solid rgba(255,255,255,0.05)";
-  icon.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.1), 0 1px 0 rgba(0,0,0,0.02)";
-  // Use image instead of textContent
   const img = document.createElement("img");
-  img.src = `assets/images/avengers/${AVENGERS_IMAGE_MAP[tile.face]}`;
-  img.alt = tile.face;
+  img.alt = tile.face; // Set alt here
   icon.appendChild(img);
-  // icon.textContent = shortFace(tile.face);
 
   const label = document.createElement("div");
   label.className = "label";
-  label.textContent = tile.face;
 
   el.appendChild(icon);
   el.appendChild(label);
 
-  el.addEventListener("click", () => onTileClicked(tile.id));
+  // No event listener here, will be added once per element in renderAll/refreshInteractiveStates
   return el;
+}
+
+function updateTileElementContent(el, tile) {
+  const { c1, c2 } = faceToColors(tile.face);
+
+  // Apply dynamic colors to the icon background, not the entire tile
+  const iconEl = el.querySelector('.icon');
+  if (iconEl) {
+    iconEl.style.background = `linear-gradient(135deg, ${c1}, ${c2})`;
+  }
+
+  const img = el.querySelector('.icon img');
+  if (img) {
+    img.src = `assets/images/avengers/${AVENGERS_IMAGE_MAP[tile.face]}`;
+  }
+  el.querySelector('.label').textContent = tile.face;
 }
 
 function updateTileElementState(el, tile) {
@@ -384,6 +391,11 @@ function updateTileElementState(el, tile) {
   el.classList.toggle("free", free && !tile.removed);
   el.classList.toggle("blocked", !free && !tile.removed);
   el.classList.toggle("selected", selectedTileId === tile.id);
+
+  // Only update content if not removed, or if it's a match operation (to avoid flashing content of removed tile)
+  if (!tile.removed) {
+    updateTileElementContent(el, tile);
+  }
 }
 
 // Removed shortFace function as it is no longer needed
@@ -395,15 +407,11 @@ function updateTileElementState(el, tile) {
 //   return firsts;
 // }
 
-function renderAll() {
-  boardEl.innerHTML = "";
-  for (const tile of tiles) {
-    const el = createTileElement(tile);
-    updateTileElementState(el, tile);
-    boardEl.appendChild(el);
-  }
-  pairsEl.textContent = String(Math.floor(tiles.filter((t) => !t.removed).length / 2));
-  movesEl.textContent = String(movesCount);
+// Renamed from renderAll, now only for initial DOM setup
+function initializeBoardDOM() {
+  // This function is no longer directly called like before.
+  // Its logic is now integrated into dealNewGame for initial setup.
+  // This is a placeholder for clarity.
 }
 
 function refreshInteractiveStates() {
@@ -412,6 +420,7 @@ function refreshInteractiveStates() {
     const el = children[i];
     const id = Number(el.dataset.id);
     const tile = tiles[id];
+    // Always update the state for all tiles
     updateTileElementState(el, tile);
   }
   pairsEl.textContent = String(Math.floor(tiles.filter((t) => !t.removed).length / 2));
@@ -485,7 +494,16 @@ function dealNewGame() {
   boardEl.style.height = `${boardSize.height}px`;
   scaleBoardToFit(boardSize);
 
-  renderAll();
+  // Clear board and create/append all tile elements once
+  boardEl.innerHTML = "";
+  for (const tile of tiles) {
+    const el = createTileElement(tile);
+    el.addEventListener("click", () => onTileClicked(tile.id));
+    boardEl.appendChild(el);
+  }
+
+  // After creating all, update their initial states and content
+  refreshInteractiveStates();
 }
 
 function ensureTimerStarted() {
@@ -562,9 +580,43 @@ function undo() {
   const b = tiles[last.bId];
   if (a) a.removed = false;
   if (b) b.removed = false;
+  redoStack.push({ aId: a.id, bId: b.id }); // Push undone move to redo stack
   movesCount = Math.max(0, movesCount - 1);
   selectedTileId = null;
   refreshInteractiveStates();
+}
+
+function shuffleRemainingTiles() {
+  const visibleTiles = tiles.filter(t => !t.removed);
+  const currentFaces = visibleTiles.map(t => t.face);
+
+  shuffleInPlace(currentFaces);
+
+  let shuffledFaceIndex = 0;
+  for (let i = 0; i < tiles.length; i += 1) {
+    if (!tiles[i].removed) {
+      tiles[i].face = currentFaces[shuffledFaceIndex];
+      shuffledFaceIndex += 1;
+    }
+  }
+
+  // Explicitly update DOM for face changes
+  for (let i = 0; i < tiles.length; i += 1) {
+    const tile = tiles[i];
+    if (!tile.removed) {
+      const el = boardEl.querySelector(`[data-id="${tile.id}"]`);
+      if (el) {
+        updateTileElementContent(el, tile);
+      }
+    }
+  }
+
+  selectedTileId = null;
+  undoStack = [];
+  redoStack = [];
+  movesCount += 1;
+
+  refreshInteractiveStates(); 
 }
 
 function hint() {
@@ -653,6 +705,7 @@ undoBtn.addEventListener("click", () => undo());
 hintBtn.addEventListener("click", () => hint());
 redoBtn.addEventListener("click", () => redo());
 layoutSelect.addEventListener("change", () => dealNewGame());
+shuffleBtn.addEventListener("click", () => shuffleRemainingTiles());
 
 window.addEventListener("resize", () => {
   const positions = tiles.map((t) => ({ x: t.x, y: t.y, z: t.z }));
