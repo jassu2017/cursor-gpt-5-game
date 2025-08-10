@@ -14,9 +14,9 @@ python3 -m http.server 5173
 
 ## Controls
 
-- New Game: deal a fresh randomized layout
+- New Game: deal a fresh randomized layout (now includes multiple layouts)
 - Undo: revert the last matched pair
-- Hint: highlight an available pair (if any)
+- Hint: highlights a pair and shows a descriptive message with coordinates and open sides
 
 ## Notes
 

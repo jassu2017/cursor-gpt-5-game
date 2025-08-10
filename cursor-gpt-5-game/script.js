@@ -165,6 +165,34 @@ function generateTurtlePositions() {
   return positions;
 }
 
+function generateFortressPositions() {
+  // A winged/stepped shape totaling 144 tiles:
+  // z=0: 90, z=1: 40, z=2: 14
+  const positions = [];
+  // z=0 stepped base
+  const z0Rows = [
+    { y: 0, x0: 0, x1: 13 }, // 14
+    { y: 1, x0: 0, x1: 13 }, // 14
+    { y: 2, x0: 0, x1: 13 }, // 14
+    { y: 3, x0: 0, x1: 13 }, // 14
+    { y: 4, x0: 1, x1: 12 }, // 12
+    { y: 5, x0: 1, x1: 12 }, // 12
+    { y: 6, x0: 2, x1: 11 }, // 10
+  ];
+  for (const r of z0Rows) {
+    for (let x = r.x0; x <= r.x1; x += 1) positions.push({ x, y: r.y, z: 0 });
+  }
+  // z=1 inner rectangle (4 rows of 10 each)
+  for (let y = 1; y <= 4; y += 1) {
+    for (let x = 2; x <= 11; x += 1) positions.push({ x, y, z: 1 });
+  }
+  // z=2 center block (2 rows of 7 each)
+  for (let y = 2; y <= 3; y += 1) {
+    for (let x = 4; x <= 10; x += 1) positions.push({ x, y, z: 2 });
+  }
+  return positions;
+}
+
 // --- Free/blocked logic ---
 function getTileAtPosition(z, x, y) {
   return tiles.find((t) => !t.removed && t.z === z && t.x === x && t.y === y) || null;
@@ -252,6 +280,21 @@ function refreshInteractiveStates() {
   movesEl.textContent = String(movesCount);
 }
 
+// --- Helpers for hint ---
+function getOpenSides(tile) {
+  // Assumes tile is free
+  const hasLeft = !!getTileAtPosition(tile.z, tile.x - 1, tile.y);
+  const hasRight = !!getTileAtPosition(tile.z, tile.x + 1, tile.y);
+  return { leftOpen: !hasLeft, rightOpen: !hasRight };
+}
+
+function sideText(sides) {
+  if (sides.leftOpen && sides.rightOpen) return "both sides open";
+  if (sides.leftOpen) return "left side open";
+  if (sides.rightOpen) return "right side open";
+  return "no side open"; // shouldn't happen for a free tile
+}
+
 // --- Game logic ---
 function dealNewGame() {
   stopTimer();
@@ -263,7 +306,9 @@ function dealNewGame() {
   messageEl.classList.add("hidden");
   messageEl.textContent = "";
 
-  const positions = generateTurtlePositions();
+  // Choose a layout at random
+  const layoutFns = [generateTurtlePositions, generateFortressPositions];
+  const positions = layoutFns[Math.floor(Math.random() * layoutFns.length)]();
 
   // Build a deck of 36 faces x 4 copies = 144
   const faces = [];
@@ -382,29 +427,41 @@ function hint() {
   }
   for (const [face, arr] of map.entries()) {
     if (arr.length >= 2) {
-      // highlight two
-      highlightTiles([arr[0].id, arr[1].id]);
+      const a = arr[0];
+      const b = arr[1];
+      // highlight two with strong style
+      highlightTiles([a.id, b.id], true);
+      const sa = sideText(getOpenSides(a));
+      const sb = sideText(getOpenSides(b));
+      messageEl.textContent = `Hint: Match ${face}. Tile A at z${a.z}, r${a.y}, c${a.x} (${sa}) and Tile B at z${b.z}, r${b.y}, c${b.x} (${sb}).`;
+      messageEl.classList.remove("hidden");
+      setTimeout(() => messageEl.classList.add("hidden"), 2200);
       return;
     }
   }
-  flashMessage("No available matches. Try undo or start a new game.");
+  messageEl.textContent = "No available matches. Try undo or start a new game.";
+  messageEl.classList.remove("hidden");
+  setTimeout(() => messageEl.classList.add("hidden"), 1500);
 }
 
-function highlightTiles(ids) {
+function highlightTiles(ids, strong = false) {
   const set = new Set(ids);
   const children = boardEl.children;
   for (let i = 0; i < children.length; i += 1) {
     const el = children[i];
     const id = Number(el.dataset.id);
-    el.classList.toggle("hint", set.has(id));
+    const on = set.has(id);
+    el.classList.toggle("hint", on);
+    el.classList.toggle("hint-strong", strong && on);
   }
-  setTimeout(clearHint, 1500);
+  setTimeout(clearHint, 2000);
 }
 
 function clearHint() {
   const children = boardEl.children;
   for (let i = 0; i < children.length; i += 1) {
     children[i].classList.remove("hint");
+    children[i].classList.remove("hint-strong");
   }
 }
 
