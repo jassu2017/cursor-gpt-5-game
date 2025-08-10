@@ -16,10 +16,6 @@ python3 -m http.server 5173
 
 - New Game: deal a fresh randomized layout (now includes multiple layouts)
 - Undo: revert the last matched pair
-<<<<<<< HEAD
-- Redo: re-apply the last undone move
-=======
->>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
 - Hint: highlights a pair and shows a descriptive message with coordinates and open sides
 
 ## Notes
@@ -27,7 +23,3 @@ python3 -m http.server 5173
 - Layout contains 144 tiles (36 Avengers names, 4 copies each).
 - The game does not guarantee solvable deals, similar to many classic Mahjong Solitaire implementations.
 - Tiles use color-coded labels derived from names (no copyrighted images).
-<<<<<<< HEAD
-
-=======
->>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c

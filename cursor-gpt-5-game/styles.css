@@ -165,8 +165,4 @@ body {
   .topbar { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; }
   .controls { order: 3; }
   .stats { order: 2; justify-self: end; }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c

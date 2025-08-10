@@ -59,10 +59,6 @@ let undoStack = []; // stack of { aId, bId }
 let movesCount = 0;
 let timerInterval = null;
 let elapsedSeconds = 0;
-<<<<<<< HEAD
-let redoStack = []; // stack of { aId, bId }
-=======
->>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
 
 // --- DOM ---
 const boardEl = document.getElementById("board");
@@ -70,10 +66,6 @@ const boardWrapperEl = document.getElementById("board-wrapper");
 const newGameBtn = document.getElementById("newGameBtn");
 const undoBtn = document.getElementById("undoBtn");
 const hintBtn = document.getElementById("hintBtn");
-<<<<<<< HEAD
-const redoBtn = document.getElementById("redoBtn");
-=======
->>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
 const movesEl = document.getElementById("movesCount");
 const timeEl = document.getElementById("timeElapsed");
 const pairsEl = document.getElementById("pairsRemaining");
@@ -201,99 +193,6 @@ function generateFortressPositions() {
   return positions;
 }
 
-<<<<<<< HEAD
-function generateFishPositions() {
-  const positions = [];
-  // z=0 (base): 14x7 rectangle with a "tail"
-  // Main body
-  for (let y = 0; y <= 6; y += 1) {
-    for (let x = 0; x <= 13; x += 1) {
-      positions.push({ x, y, z: 0 });
-    }
-  }
-  // Tail part (extends from y=2 to y=4, x=14)
-  for (let y = 2; y <= 4; y += 1) {
-    positions.push({ x: 14, y, z: 0 });
-  }
-
-  // z=1: 12x5 rectangle
-  for (let y = 1; y <= 5; y += 1) {
-    for (let x = 1; x <= 12; x += 1) {
-      positions.push({ x, y, z: 1 });
-    }
-  }
-
-  // z=2: 10x3 rectangle
-  for (let y = 2; y <= 4; y += 1) {
-    for (let x = 2; x <= 11; x += 1) {
-      positions.push({ x, y, z: 2 });
-    }
-  }
-
-  // z=3: 8x1 rectangle
-  for (let x = 3; x <= 10; x += 1) {
-    positions.push({ x, y: 3, z: 3 });
-  }
-  return positions;
-}
-
-function generateButterflyPositions() {
-  const positions = [];
-  // z=0 (base): Two wings of 5x6 each, separated by a gap, plus a 3x2 center block
-  // Left wing
-  for (let y = 0; y <= 5; y += 1) {
-    for (let x = 0; x <= 4; x += 1) {
-      positions.push({ x, y, z: 0 });
-    }
-  }
-  // Right wing
-  for (let y = 0; y <= 5; y += 1) {
-    for (let x = 9; x <= 13; x += 1) {
-      positions.push({ x, y, z: 0 });
-    }
-  }
-  // Center body base
-  for (let y = 2; y <= 3; y += 1) {
-    for (let x = 6; x <= 7; x += 1) {
-      positions.push({ x, y, z: 0 });
-    }
-  }
-
-  // z=1: Two wings of 3x4 each, plus a 1x2 center block
-  // Left wing
-  for (let y = 1; y <= 4; y += 1) {
-    for (let x = 1; x <= 3; x += 1) {
-      positions.push({ x, y, z: 1 });
-    }
-  }
-  // Right wing
-  for (let y = 1; y <= 4; y += 1) {
-    for (let x = 10; x <= 12; x += 1) {
-      positions.push({ x, y, z: 1 });
-    }
-  }
-  // Center body
-  for (let y = 2; y <= 3; y += 1) {
-    positions.push({ x: 6, y, z: 1 });
-  }
-
-  // z=2: Two 1x2 blocks
-  // Left
-  for (let y = 2; y <= 3; y += 1) {
-    positions.push({ x: 2, y, z: 2 });
-  }
-  // Right
-  for (let y = 2; y <= 3; y += 1) {
-    positions.push({ x: 11, y, z: 2 });
-  }
-
-  // z=3: Single tile in center
-  positions.push({ x: 6, y: 2, z: 3 });
-  return positions;
-}
-
-=======
->>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
 // --- Free/blocked logic ---
 function getTileAtPosition(z, x, y) {
   return tiles.find((t) => !t.removed && t.z === z && t.x === x && t.y === y) || null;
@@ -403,20 +302,12 @@ function dealNewGame() {
   timeEl.textContent = formatTime(0);
   movesCount = 0;
   undoStack = [];
-<<<<<<< HEAD
-  redoStack = []; // Clear redo stack on new game
-=======
->>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
   selectedTileId = null;
   messageEl.classList.add("hidden");
   messageEl.textContent = "";
 
   // Choose a layout at random
-<<<<<<< HEAD
-  const layoutFns = [generateTurtlePositions, generateFortressPositions, generateFishPositions, generateButterflyPositions];
-=======
   const layoutFns = [generateTurtlePositions, generateFortressPositions];
->>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
   const positions = layoutFns[Math.floor(Math.random() * layoutFns.length)]();
 
   // Build a deck of 36 faces x 4 copies = 144
@@ -469,12 +360,6 @@ function onTileClicked(tileId) {
 
   ensureTimerStarted();
 
-<<<<<<< HEAD
-  // Clear redo stack on any new move
-  redoStack = [];
-
-=======
->>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
   if (selectedTileId == null) {
     selectedTileId = tileId;
     refreshInteractiveStates();
@@ -526,31 +411,11 @@ function undo() {
   const b = tiles[last.bId];
   if (a) a.removed = false;
   if (b) b.removed = false;
-<<<<<<< HEAD
-  redoStack.push({ aId: a.id, bId: b.id }); // Push undone move to redo stack
-=======
->>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
   movesCount = Math.max(0, movesCount - 1);
   selectedTileId = null;
   refreshInteractiveStates();
 }
 
-<<<<<<< HEAD
-function redo() {
-  const last = redoStack.pop();
-  if (!last) return;
-  const a = tiles[last.aId];
-  const b = tiles[last.bId];
-  if (a) a.removed = true;
-  if (b) b.removed = true;
-  movesCount = movesCount + 1;
-  selectedTileId = null;
-  refreshInteractiveStates();
-  checkWin();
-}
-
-=======
->>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
 function hint() {
   clearHint();
   const freeTiles = tiles.filter((t) => !t.removed && isTileFree(t));
@@ -610,10 +475,6 @@ function flashMessage(text) {
 newGameBtn.addEventListener("click", () => dealNewGame());
 undoBtn.addEventListener("click", () => undo());
 hintBtn.addEventListener("click", () => hint());
-<<<<<<< HEAD
-redoBtn.addEventListener("click", () => redo());
-=======
->>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
 
 window.addEventListener("resize", () => {
   const positions = tiles.map((t) => ({ x: t.x, y: t.y, z: t.z }));
@@ -622,8 +483,4 @@ window.addEventListener("resize", () => {
 });
 
 // --- Init ---
-<<<<<<< HEAD
 dealNewGame();
-=======
-dealNewGame();
->>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
