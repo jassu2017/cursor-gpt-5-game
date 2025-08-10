@@ -8,8 +8,8 @@
 
   --tile-w: 88px;
   --tile-h: 112px;
-  --step-x: 56px; /* horizontal spacing between columns */
-  --step-y: 40px; /* vertical spacing between rows */
+  --step-x: 72px; /* horizontal spacing between columns (increased) */
+  --step-y: 56px; /* vertical spacing between rows (increased) */
   --stack-shift-x: 6px; /* x offset per z layer */
   --stack-shift-y: 6px; /* y offset per z layer (negative goes up visually) */
 }
@@ -88,16 +88,17 @@ body {
   width: var(--tile-w);
   height: var(--tile-h);
   border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.6);
-  background: linear-gradient(165deg, #f7f9fc 0%, #e9eef7 100%);
+  border: 1px solid rgba(255,255,255,0.15); /* Lighter border for metallic look */
+  background: linear-gradient(165deg, #333a4f 0%, #202434 100%); /* Darker, metallic gradient */
   box-shadow:
-    0 10px 16px rgba(0,0,0,0.35),
-    inset 0 1px 0 rgba(255,255,255,0.8),
-    inset 0 -1px 0 rgba(0,0,0,0.06);
+    0 8px 16px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    inset 0 -2px 0 rgba(0,0,0,0.2),
+    inset 0 0 0 1px rgba(255,255,255,0.05); /* More complex shadow for depth */
   display: grid;
   grid-template-rows: 1fr auto;
   padding: 8px;
-  color: #0b1020;
+  color: var(--text); /* Changed to use --text for consistency */
   cursor: pointer;
   transition: transform 120ms ease, box-shadow 120ms ease, opacity 200ms ease, filter 120ms ease, outline-color 120ms ease;
 }
@@ -106,21 +107,30 @@ body {
   display: grid;
   place-items: center;
   font-weight: 800;
-  font-size: 18px;
+  font-size: 20px; /* Slightly larger font */
   text-align: center;
   padding: 4px;
   border-radius: 8px;
-  color: #0b1020;
+  background: rgba(255,255,255,0.08); /* Semi-transparent background for icons */
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 1px 0 rgba(0,0,0,0.02);
+  color: var(--text); /* Ensure icon color is readable */
+}
+
+.tile .icon img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* Ensures the image scales down to fit without cropping */
 }
 
 .tile .label {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11px; /* Slightly smaller for label */
+  font-weight: 600; /* Slightly less bold */
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: rgba(11,16,32,0.85);
+  color: var(--muted); /* Use muted color for label */
   opacity: 0; /* Initially hidden */
   transition: opacity 0.2s ease;
 }
@@ -142,8 +152,29 @@ body {
 
 @keyframes hintPulse {
   0% { box-shadow: 0 0 0 2px rgba(18,214,223,0.25), 0 0 0 6px rgba(18,214,223,0.12); }
-  50% { box-shadow: 0 0 0 4px rgba(18,214,223,0.34), 0 0 0 12px rgba(18,214,223,0.14); }
+  50% { box-shadow: 0 0 0 6px rgba(18,214,223,0.4), 0 0 0 16px rgba(18,214,223,0.2); }
   100% { box-shadow: 0 0 0 2px rgba(18,214,223,0.25), 0 0 0 6px rgba(18,214,223,0.12); }
+}
+
+.confetti-particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: confettiFall 1.5s forwards ease-out;
+}
+
+@keyframes confettiFall {
+  0% {
+    opacity: 1;
+    transform: translate(calc(var(--vx) * 0), calc(var(--vy) * 0)) rotate(var(--rz));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--vx) * 15), calc(var(--vy) * 15 + 100px)) rotate(calc(var(--rz) + var(--rs)));
+  }
 }
 
 #message {

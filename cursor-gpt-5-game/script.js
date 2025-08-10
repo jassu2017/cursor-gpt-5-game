@@ -3,8 +3,8 @@
 // --- Config ---
 const TILE_WIDTH_PX = 88; // keep in sync with CSS
 const TILE_HEIGHT_PX = 112;
-const STEP_X_PX = 56; // grid step x
-const STEP_Y_PX = 40; // grid step y
+const STEP_X_PX = 72; // grid step x (increased)
+const STEP_Y_PX = 56; // grid step y (increased)
 const STACK_SHIFT_X_PX = 6; // per z layer
 const STACK_SHIFT_Y_PX = 6; // per z layer (visual up)
 
@@ -12,6 +12,45 @@ const STACK_SHIFT_Y_PX = 6; // per z layer (visual up)
 // z=0: 15 x 6 => 90 tiles
 // z=1: 13 x 4 => 52 tiles
 // z=2: 1 x 2  => 2 tiles
+
+const AVENGERS_IMAGE_MAP = {
+  "Iron Man": "iron_man_cartoon.PNG",
+  "Captain America": "captain_america_cartoon.PNG",
+  "Thor": "thor_cartoon.PNG",
+  "Hulk": "hulk_cartoon.PNG",
+  "Black Widow": "black_widow_cartoon.PNG",
+  "Hawkeye": "hawkeye_cartoon.PNG",
+  "Spider-Man": "spider_man_cartoon.PNG",
+  "Black Panther": "black_panther_cartoon.PNG",
+  "Doctor Strange": "doctor_strange_cartoon.PNG",
+  "Scarlet Witch": "scarlet_witch_cartoon.PNG",
+  "Vision": "vision_cartoon.PNG",
+  "Ant-Man": "ant_man_cartoon.PNG",
+  "Wasp": "wasp_cartoon.PNG",
+  "Captain Marvel": "captain_marvel_cartoon.PNG",
+  "Falcon": "falcon_cartoon.PNG",
+  "Winter Soldier": "winter_soldier_cartoon.PNG",
+  "Star-Lord": "star_lord_cartoon.PNG",
+  "Gamora": "gamora_cartoon.PNG",
+  "Drax": "drax_cartoon.PNG",
+  "Rocket": "rocket_cartoon.PNG",
+  "Groot": "groot_cartoon.PNG",
+  "Mantis": "mantis_cartoon.PNG",
+  "Nebula": "nebula_cartoon.PNG",
+  "Nick Fury": "nick_fury_cartoon.PNG",
+  "War Machine": "war_machine_cartoon.PNG",
+  "Shuri": "shuri_cartoon.PNG",
+  "Okoye": "okoye_cartoon.PNG",
+  "Wong": "wong_cartoon.PNG",
+  "Valkyrie": "valkyrie_cartoon.PNG",
+  "Korg": "korg_cartoon.PNG",
+  "Loki": "loki_cartoon.PNG",
+  "Heimdall": "heimdall_cartoon.PNG",
+  "Peggy Carter": "peggy_carter_cartoon.PNG",
+  "Quicksilver": "quicksilver_cartoon.PNG",
+  "Kate Bishop": "kate_bishop_cartoon.PNG",
+  "Ms. Marvel": "ms_marvel_cartoon.PNG",
+};
 
 const AVENGERS_NAMES = [
   "Iron Man",
@@ -317,10 +356,16 @@ function createTileElement(tile) {
 
   const icon = document.createElement("div");
   icon.className = "icon";
-  icon.style.background = `linear-gradient(135deg, ${c1}, ${c2})`;
-  icon.style.border = "1px solid rgba(0,0,0,0.15)";
-  icon.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 0 rgba(0,0,0,0.04)";
-  icon.textContent = shortFace(tile.face);
+  // For images, background color of icon will be determined by image itself or default
+  // icon.style.background = `linear-gradient(135deg, ${c1}, ${c2})`;
+  icon.style.border = "1px solid rgba(255,255,255,0.05)";
+  icon.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,0.1), 0 1px 0 rgba(0,0,0,0.02)";
+  // Use image instead of textContent
+  const img = document.createElement("img");
+  img.src = `assets/images/avengers/${AVENGERS_IMAGE_MAP[tile.face]}`;
+  img.alt = tile.face;
+  icon.appendChild(img);
+  // icon.textContent = shortFace(tile.face);
 
   const label = document.createElement("div");
   label.className = "label";
@@ -341,13 +386,14 @@ function updateTileElementState(el, tile) {
   el.classList.toggle("selected", selectedTileId === tile.id);
 }
 
-function shortFace(face) {
-  // Create 2-3 letter code from face, e.g., "IM" for Iron Man
-  const words = face.split(/\s|-/).filter(Boolean);
-  if (words.length === 1) return words[0].slice(0, 3).toUpperCase();
-  const firsts = words.map((w) => w[0]).slice(0, 3).join("").toUpperCase();
-  return firsts;
-}
+// Removed shortFace function as it is no longer needed
+// function shortFace(face) {
+//   // Create 2-3 letter code from face, e.g., "IM" for Iron Man
+//   const words = face.split(/\s|-/).filter(Boolean);
+//   if (words.length === 1) return words[0].slice(0, 3).toUpperCase();
+//   const firsts = words.map((w) => w[0]).slice(0, 3).join("").toUpperCase();
+//   return firsts;
+// }
 
 function renderAll() {
   boardEl.innerHTML = "";
@@ -492,6 +538,7 @@ function onTileClicked(tileId) {
     movesCount += 1;
     refreshInteractiveStates();
     checkWin();
+    createConfetti(positionToCssLeft(tile.x, tile.z), positionToCssTop(tile.y, tile.z));
   } else {
     // switch selection
     selectedTileId = tileId;
@@ -535,9 +582,7 @@ function hint() {
       const b = arr[1];
       // highlight two with strong style
       highlightTiles([a.id, b.id], true);
-      const sa = sideText(getOpenSides(a));
-      const sb = sideText(getOpenSides(b));
-      messageEl.textContent = `Hint: Match ${face}. Tile A at z${a.z}, r${a.y}, c${a.x} (${sa}) and Tile B at z${b.z}, r${b.y}, c${b.x} (${sb}).`;
+      messageEl.textContent = `Hint: Match ${face}.`;
       messageEl.classList.remove("hidden");
       setTimeout(() => messageEl.classList.add("hidden"), 2200);
       return;
@@ -573,6 +618,33 @@ function flashMessage(text) {
   messageEl.textContent = text;
   messageEl.classList.remove("hidden");
   setTimeout(() => messageEl.classList.add("hidden"), 1200);
+}
+
+// --- Confetti ---
+function createConfetti(x, y) {
+  const colors = ["#ff7a7a", "#a2d9ff", "#ffe066", "#c2ff7a", "#ff99cc"];
+  for (let i = 0; i < 30; i += 1) {
+    const particle = document.createElement("div");
+    particle.className = "confetti-particle";
+    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+    particle.style.left = `${x}px`;
+    particle.style.top = `${y}px`;
+    boardEl.appendChild(particle);
+
+    const angle = Math.random() * Math.PI * 2;
+    const velocity = Math.random() * 20 + 10; // 10 to 30
+    const rotation = Math.random() * 360;
+    const rotationSpeed = Math.random() * 200 - 100; // -100 to 100
+
+    particle.style.setProperty('--vx', `${Math.cos(angle) * velocity}px`);
+    particle.style.setProperty('--vy', `${Math.sin(angle) * velocity}px`);
+    particle.style.setProperty('--rz', `${rotation}deg`);
+    particle.style.setProperty('--rs', `${rotationSpeed}deg`);
+
+    particle.addEventListener('animationend', () => {
+      particle.remove();
+    });
+  }
 }
 
 // --- Events ---

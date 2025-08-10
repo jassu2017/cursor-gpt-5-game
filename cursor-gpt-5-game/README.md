@@ -23,4 +23,4 @@ python3 -m http.server 5173
 
 - Layout contains 144 tiles (36 Avengers names, 4 copies each).
 - The game does not guarantee solvable deals, similar to many classic Mahjong Solitaire implementations.
-- Tiles use color-coded labels derived from names (no copyrighted images).
+- Tiles now feature metallic-themed designs with cartoon Avengers images and character names as labels, enhanced with a celebratory confetti effect on matches.
