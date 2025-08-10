@@ -66,6 +66,8 @@ const boardWrapperEl = document.getElementById("board-wrapper");
 const newGameBtn = document.getElementById("newGameBtn");
 const undoBtn = document.getElementById("undoBtn");
 const hintBtn = document.getElementById("hintBtn");
+const redoBtn = document.getElementById("redoBtn");
+const layoutSelect = document.getElementById("layoutSelect");
 const movesEl = document.getElementById("movesCount");
 const timeEl = document.getElementById("timeElapsed");
 const pairsEl = document.getElementById("pairsRemaining");
@@ -193,6 +195,96 @@ function generateFortressPositions() {
   return positions;
 }
 
+function generateFishPositions() {
+  const positions = [];
+  // z=0 (base): 14x7 rectangle with a "tail"
+  // Main body
+  for (let y = 0; y <= 6; y += 1) {
+    for (let x = 0; x <= 13; x += 1) {
+      positions.push({ x, y, z: 0 });
+    }
+  }
+  // Tail part (extends from y=2 to y=4, x=14)
+  for (let y = 2; y <= 4; y += 1) {
+    positions.push({ x: 14, y, z: 0 });
+  }
+
+  // z=1: 12x5 rectangle
+  for (let y = 1; y <= 5; y += 1) {
+    for (let x = 1; x <= 12; x += 1) {
+      positions.push({ x, y, z: 1 });
+    }
+  }
+
+  // z=2: 10x3 rectangle
+  for (let y = 2; y <= 4; y += 1) {
+    for (let x = 2; x <= 11; x += 1) {
+      positions.push({ x, y, z: 2 });
+    }
+  }
+
+  // z=3: 8x1 rectangle
+  for (let x = 3; x <= 10; x += 1) {
+    positions.push({ x, y: 3, z: 3 });
+  }
+  return positions;
+}
+
+function generateButterflyPositions() {
+  const positions = [];
+  // z=0 (base): Two wings of 5x6 each, separated by a gap, plus a 3x2 center block
+  // Left wing
+  for (let y = 0; y <= 5; y += 1) {
+    for (let x = 0; x <= 4; x += 1) {
+      positions.push({ x, y, z: 0 });
+    }
+  }
+  // Right wing
+  for (let y = 0; y <= 5; y += 1) {
+    for (let x = 9; x <= 13; x += 1) {
+      positions.push({ x, y, z: 0 });
+    }
+  }
+  // Center body base
+  for (let y = 2; y <= 3; y += 1) {
+    for (let x = 6; x <= 7; x += 1) {
+      positions.push({ x, y, z: 0 });
+    }
+  }
+
+  // z=1: Two wings of 3x4 each, plus a 1x2 center block
+  // Left wing
+  for (let y = 1; y <= 4; y += 1) {
+    for (let x = 1; x <= 3; x += 1) {
+      positions.push({ x, y, z: 1 });
+    }
+  }
+  // Right wing
+  for (let y = 1; y <= 4; y += 1) {
+    for (let x = 10; x <= 12; x += 1) {
+      positions.push({ x, y, z: 1 });
+    }
+  }
+  // Center body
+  for (let y = 2; y <= 3; y += 1) {
+    positions.push({ x: 6, y, z: 1 });
+  }
+
+  // z=2: Two 1x2 blocks
+  // Left
+  for (let y = 2; y <= 3; y += 1) {
+    positions.push({ x: 2, y, z: 2 });
+  }
+  // Right
+  for (let y = 2; y <= 3; y += 1) {
+    positions.push({ x: 11, y, z: 2 });
+  }
+
+  // z=3: Single tile in center
+  positions.push({ x: 6, y: 2, z: 3 });
+  return positions;
+}
+
 // --- Free/blocked logic ---
 function getTileAtPosition(z, x, y) {
   return tiles.find((t) => !t.removed && t.z === z && t.x === x && t.y === y) || null;
@@ -306,9 +398,21 @@ function dealNewGame() {
   messageEl.classList.add("hidden");
   messageEl.textContent = "";
 
-  // Choose a layout at random
-  const layoutFns = [generateTurtlePositions, generateFortressPositions];
-  const positions = layoutFns[Math.floor(Math.random() * layoutFns.length)]();
+  // Choose a layout based on selection or random
+  const selectedLayout = layoutSelect.value;
+  let positions;
+  if (selectedLayout === "random") {
+    const layoutFns = [generateTurtlePositions, generateFortressPositions, generateFishPositions, generateButterflyPositions];
+    positions = layoutFns[Math.floor(Math.random() * layoutFns.length)]();
+  } else if (selectedLayout === "turtle") {
+    positions = generateTurtlePositions();
+  } else if (selectedLayout === "fortress") {
+    positions = generateFortressPositions();
+  } else if (selectedLayout === "fish") {
+    positions = generateFishPositions();
+  } else if (selectedLayout === "butterfly") {
+    positions = generateButterflyPositions();
+  }
 
   // Build a deck of 36 faces x 4 copies = 144
   const faces = [];
@@ -475,6 +579,8 @@ function flashMessage(text) {
 newGameBtn.addEventListener("click", () => dealNewGame());
 undoBtn.addEventListener("click", () => undo());
 hintBtn.addEventListener("click", () => hint());
+redoBtn.addEventListener("click", () => redo());
+layoutSelect.addEventListener("change", () => dealNewGame());
 
 window.addEventListener("resize", () => {
   const positions = tiles.map((t) => ({ x: t.x, y: t.y, z: t.z }));

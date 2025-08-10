@@ -121,6 +121,12 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   color: rgba(11,16,32,0.85);
+  opacity: 0; /* Initially hidden */
+  transition: opacity 0.2s ease;
+}
+
+.tile.free .label {
+  opacity: 1; /* Visible when free */
 }
 
 .tile.free { outline: 2px solid rgba(18,214,223,0.8); }

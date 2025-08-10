@@ -14,8 +14,9 @@ python3 -m http.server 5173
 
 ## Controls
 
-- New Game: deal a fresh randomized layout (now includes multiple layouts)
+- New Game: Start a new game with the currently selected layout (or a random one if "Random Layout" is chosen).
 - Undo: revert the last matched pair
+- Redo: re-apply the last undone move
 - Hint: highlights a pair and shows a descriptive message with coordinates and open sides
 
 ## Notes
