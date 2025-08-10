@@ -40,16 +40,16 @@ const AVENGERS_IMAGE_MAP = {
   "Nick Fury": "nick_fury_cartoon.PNG",
   "War Machine": "war_machine_cartoon.PNG",
   "Shuri": "shuri_cartoon.PNG",
-  "Okoye": "okoye_cartoon.PNG",
+  "Okoye": "Okoye_cartoon.PNG",
   "Wong": "wong_cartoon.PNG",
-  "Valkyrie": "valkyrie_cartoon.PNG",
+  "Valkyrie": "Valkyrie_cartoon.PNG",
   "Korg": "korg_cartoon.PNG",
   "Loki": "loki_cartoon.PNG",
-  "Heimdall": "heimdall_cartoon.PNG",
-  "Peggy Carter": "peggy_carter_cartoon.PNG",
-  "Quicksilver": "quicksilver_cartoon.PNG",
-  "Kate Bishop": "kate_bishop_cartoon.PNG",
-  "Ms. Marvel": "ms_marvel_cartoon.PNG",
+  "Heimdall": "Heimdall_cartoon.PNG",
+  "Peggy Carter": "Peggy_Carter_cartoon.PNG",
+  "Quicksilver": "Quicksilver_cartoon.PNG",
+  "Kate Bishop": "Kate_Bishop_cartoon.PNG",
+  "Ms. Marvel": "Ms_Marvel_cartoon.PNG",
 };
 
 const AVENGERS_NAMES = [

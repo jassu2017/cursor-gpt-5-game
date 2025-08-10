@@ -12,6 +12,19 @@ python3 -m http.server 5173
 # then open http://localhost:5173/cursor-gpt-5-game/
 ```
 
+### Running with Docker
+
+To build the Docker image:
+```bash
+docker build -t avengers-mahjong .
+```
+
+To run the Docker container:
+```bash
+docker run -p 5173:5173 avengers-mahjong
+# then open http://localhost:5173/cursor-gpt-5-game/
+```
+
 ## Controls
 
 - New Game: Start a new game with the currently selected layout (or a random one if "Random Layout" is chosen).
