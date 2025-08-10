@@ -128,6 +128,17 @@ body {
 .tile.blocked { cursor: not-allowed; filter: grayscale(0.4) brightness(0.95); }
 .tile.removed { opacity: 0; pointer-events: none; }
 .tile.hint { outline: 3px dashed rgba(122,162,255,0.9); }
+.tile.hint-strong {
+  outline: 3px solid var(--accent-2);
+  box-shadow: 0 0 0 4px rgba(18,214,223,0.15), 0 0 0 8px rgba(18,214,223,0.08);
+  animation: hintPulse 1s ease-in-out infinite;
+}
+
+@keyframes hintPulse {
+  0% { box-shadow: 0 0 0 2px rgba(18,214,223,0.25), 0 0 0 6px rgba(18,214,223,0.12); }
+  50% { box-shadow: 0 0 0 4px rgba(18,214,223,0.34), 0 0 0 12px rgba(18,214,223,0.14); }
+  100% { box-shadow: 0 0 0 2px rgba(18,214,223,0.25), 0 0 0 6px rgba(18,214,223,0.12); }
+}
 
 #message {
   position: absolute;
@@ -140,6 +151,7 @@ body {
   font-size: 22px;
   font-weight: 800;
   letter-spacing: 0.5px;
+  pointer-events: none; /* allow clicks to pass through when hints show */
 }
 #message.hidden { display: none; }
 
