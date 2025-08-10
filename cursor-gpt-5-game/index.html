@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Avengers Mahjong</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo">A</div>
+          <h1>Avengers Mahjong</h1>
+        </div>
+        <div class="controls">
+          <button id="newGameBtn" class="btn primary">New Game</button>
+          <button id="undoBtn" class="btn">Undo</button>
+          <button id="hintBtn" class="btn">Hint</button>
+          <button id="redoBtn" class="btn">Redo</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><span class="label">Moves</span> <span id="movesCount">0</span></div>
+          <div class="stat"><span class="label">Time</span> <span id="timeElapsed">00:00</span></div>
+          <div class="stat"><span class="label">Pairs</span> <span id="pairsRemaining">72</span></div>
+        </div>
+      </header>
+
+      <main class="main">
+        <div id="board-wrapper">
+          <div id="board"></div>
+          <div id="message" class="hidden"></div>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <span>Characters inspired by Marvel's Avengers. This project uses text labels only.</span>
+      </footer>
+    </div>
+
+    <script src="./script.js" defer></script>
+  </body>
+</html>
