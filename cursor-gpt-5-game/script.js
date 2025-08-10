@@ -59,7 +59,10 @@ let undoStack = []; // stack of { aId, bId }
 let movesCount = 0;
 let timerInterval = null;
 let elapsedSeconds = 0;
+<<<<<<< HEAD
 let redoStack = []; // stack of { aId, bId }
+=======
+>>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
 
 // --- DOM ---
 const boardEl = document.getElementById("board");
@@ -67,7 +70,10 @@ const boardWrapperEl = document.getElementById("board-wrapper");
 const newGameBtn = document.getElementById("newGameBtn");
 const undoBtn = document.getElementById("undoBtn");
 const hintBtn = document.getElementById("hintBtn");
+<<<<<<< HEAD
 const redoBtn = document.getElementById("redoBtn");
+=======
+>>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
 const movesEl = document.getElementById("movesCount");
 const timeEl = document.getElementById("timeElapsed");
 const pairsEl = document.getElementById("pairsRemaining");
@@ -195,6 +201,7 @@ function generateFortressPositions() {
   return positions;
 }
 
+<<<<<<< HEAD
 function generateFishPositions() {
   const positions = [];
   // z=0 (base): 14x7 rectangle with a "tail"
@@ -285,6 +292,8 @@ function generateButterflyPositions() {
   return positions;
 }
 
+=======
+>>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
 // --- Free/blocked logic ---
 function getTileAtPosition(z, x, y) {
   return tiles.find((t) => !t.removed && t.z === z && t.x === x && t.y === y) || null;
@@ -394,13 +403,20 @@ function dealNewGame() {
   timeEl.textContent = formatTime(0);
   movesCount = 0;
   undoStack = [];
+<<<<<<< HEAD
   redoStack = []; // Clear redo stack on new game
+=======
+>>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
   selectedTileId = null;
   messageEl.classList.add("hidden");
   messageEl.textContent = "";
 
   // Choose a layout at random
+<<<<<<< HEAD
   const layoutFns = [generateTurtlePositions, generateFortressPositions, generateFishPositions, generateButterflyPositions];
+=======
+  const layoutFns = [generateTurtlePositions, generateFortressPositions];
+>>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
   const positions = layoutFns[Math.floor(Math.random() * layoutFns.length)]();
 
   // Build a deck of 36 faces x 4 copies = 144
@@ -453,9 +469,12 @@ function onTileClicked(tileId) {
 
   ensureTimerStarted();
 
+<<<<<<< HEAD
   // Clear redo stack on any new move
   redoStack = [];
 
+=======
+>>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
   if (selectedTileId == null) {
     selectedTileId = tileId;
     refreshInteractiveStates();
@@ -507,12 +526,16 @@ function undo() {
   const b = tiles[last.bId];
   if (a) a.removed = false;
   if (b) b.removed = false;
+<<<<<<< HEAD
   redoStack.push({ aId: a.id, bId: b.id }); // Push undone move to redo stack
+=======
+>>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
   movesCount = Math.max(0, movesCount - 1);
   selectedTileId = null;
   refreshInteractiveStates();
 }
 
+<<<<<<< HEAD
 function redo() {
   const last = redoStack.pop();
   if (!last) return;
@@ -526,6 +549,8 @@ function redo() {
   checkWin();
 }
 
+=======
+>>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
 function hint() {
   clearHint();
   const freeTiles = tiles.filter((t) => !t.removed && isTileFree(t));
@@ -585,7 +610,10 @@ function flashMessage(text) {
 newGameBtn.addEventListener("click", () => dealNewGame());
 undoBtn.addEventListener("click", () => undo());
 hintBtn.addEventListener("click", () => hint());
+<<<<<<< HEAD
 redoBtn.addEventListener("click", () => redo());
+=======
+>>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
 
 window.addEventListener("resize", () => {
   const positions = tiles.map((t) => ({ x: t.x, y: t.y, z: t.z }));
@@ -594,4 +622,8 @@ window.addEventListener("resize", () => {
 });
 
 // --- Init ---
+<<<<<<< HEAD
 dealNewGame();
+=======
+dealNewGame();
+>>>>>>> 0c1d2a863679e7e7c1601771887912c680847b3c
